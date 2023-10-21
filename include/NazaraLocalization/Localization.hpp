@@ -15,6 +15,8 @@ namespace Nz
         using Dependencies = TypeList<Core>;
         struct Config {};
 
+        NazaraStaticSignal(OnLocalesInstalled, const std::vector<std::string>&);
+
         Localization(Config config);
         ~Localization();
 
@@ -23,6 +25,7 @@ namespace Nz
 
         // Changes the locale
         bool SetLocale(const std::string& locale);
+        std::vector<std::string> GetInstalledLocales() const;
 
         bool FindIndexForKey(std::string_view key, size_t& index) const;
         const std::string& GetStringAtIndex(size_t index) const;

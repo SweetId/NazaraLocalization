@@ -7,6 +7,7 @@
 namespace Nz
 {
     Localization* Localization::s_instance = nullptr;
+    NazaraStaticSignalImpl(Localization, OnLocalesInstalled);
 
     Localization::Localization(Config /*config*/)
         : ModuleBase("Localization", this)
@@ -26,6 +27,8 @@ namespace Nz
         // read header
         std::string line;
         std::getline(file, line);
+
+        size_t oldLocalesCount = m_locales.size();
 
         std::vector<size_t> locales;
         SplitString(line, ";", [&](std::string_view str) {
@@ -56,6 +59,17 @@ namespace Nz
         // ensure all loaded locales have values (even if empty) for all lookup keys
         for (auto&& locale : m_locales)
             locale.localizedStrings.resize(m_lookupTable.size());
+
+        size_t newLocalesCount = m_locales.size();
+
+        if (oldLocalesCount != newLocalesCount)
+        {
+            std::vector<std::string> v;
+            for (size_t i = oldLocalesCount - 1; i < newLocalesCount - 1; ++i)
+                v.push_back(m_locales[i].name);
+
+            OnLocalesInstalled(v);
+        }
         return true;
     }
 
@@ -74,8 +88,13 @@ namespace Nz
         return false;
     }
 
-        m_currentLocale = &(*it);
-        return true;
+    std::vector<std::string> Localization::GetInstalledLocales() const
+    {
+        std::vector<std::string> v;
+        v.reserve(m_locales.size());
+        for (auto&& locale : m_locales)
+            v.push_back(locale.name);
+        return v;
     }
 
     bool Localization::FindIndexForKey(std::string_view key, size_t& index) const
