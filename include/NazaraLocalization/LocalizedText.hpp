@@ -15,6 +15,7 @@ namespace Nz
 	public:
 		LocalizedText();
 		LocalizedText(std::string_view str);
+		LocalizedText(const char* str);
 
 		template <typename T> LocalizedText& Arg(T&& v)
 		{

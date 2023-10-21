@@ -16,6 +16,10 @@ namespace Nz
 		, m_locale(nullptr)
 	{}
 
+	LocalizedText::LocalizedText(const char* str)
+		: LocalizedText(std::string_view{ str })
+	{}
+
 	void LocalizedText::Update() const
 	{
 		if (m_locale != Nz::Localization::Instance()->m_currentLocale)
