@@ -42,6 +42,7 @@ namespace Nz
 		size_t size() const;
 
 		const std::string& ToString() const;
+		const std::string& GetBaseString() const { return m_str; }
 
 		friend std::ostream& operator<<(std::ostream& out, const Nz::LocalizedText& dt)
 		{
