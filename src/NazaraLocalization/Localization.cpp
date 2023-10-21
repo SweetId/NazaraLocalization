@@ -7,7 +7,7 @@
 namespace Nz
 {
     Localization* Localization::s_instance = nullptr;
-    NazaraStaticSignalImpl(Localization, OnLocalesInstalled);
+    NazaraStaticSignalImpl(Localization, OnLocaleInstalled);
 
     Localization::Localization(Config /*config*/)
         : ModuleBase("Localization", this)
@@ -64,11 +64,8 @@ namespace Nz
 
         if (oldLocalesCount != newLocalesCount)
         {
-            std::vector<std::string> v;
-            for (size_t i = oldLocalesCount - 1; i < newLocalesCount - 1; ++i)
-                v.push_back(m_locales[i].name);
-
-            OnLocalesInstalled(v);
+            for (size_t i = oldLocalesCount; i < newLocalesCount; ++i)
+                OnLocaleInstalled(m_locales[i].name);
         }
         return true;
     }

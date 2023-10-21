@@ -15,7 +15,7 @@ namespace Nz
         using Dependencies = TypeList<Core>;
         struct Config {};
 
-        NazaraStaticSignal(OnLocalesInstalled, const std::vector<std::string>&);
+        NazaraStaticSignal(OnLocaleInstalled, std::string_view);
 
         Localization(Config config);
         ~Localization();
