@@ -28,6 +28,9 @@ namespace Nz
         const std::string& GetStringAtIndex(size_t index) const;
 
     private:
+        size_t GetOrCreateLocale(std::string_view name);
+        size_t GetOrCreateLookupIndex(std::string_view name);
+
         struct Locale
         {
             std::string name;
@@ -38,6 +41,7 @@ namespace Nz
         std::unordered_map<std::string, size_t> m_lookupTable;
         
         Locale* m_currentLocale;
+        size_t m_currentLocaleIndex;
 
         static Localization* s_instance;
 

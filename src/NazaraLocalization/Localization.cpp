@@ -11,6 +11,7 @@ namespace Nz
     Localization::Localization(Config /*config*/)
         : ModuleBase("Localization", this)
         , m_currentLocale(nullptr)
+        , m_currentLocaleIndex(0)
     { }
 
     Localization::~Localization()
@@ -26,14 +27,13 @@ namespace Nz
         std::string line;
         std::getline(file, line);
 
-        m_locales.clear();
-        SplitString(line, ";", [this](std::string_view str) {
+        std::vector<size_t> locales;
+        SplitString(line, ";", [&](std::string_view str) {
             if (!str.empty())
-                m_locales.push_back({ std::string(str) });
+                locales.push_back(GetOrCreateLocale(str));
             return true;
         });
 
-        size_t index = 0;
         while (std::getline(file, line))
         {
             std::vector<std::string_view> values;
@@ -42,24 +42,37 @@ namespace Nz
                 return true;
             });
 
-            m_lookupTable[std::string(values[0])] = index++;
-            for (size_t i = 0; i < m_locales.size() && i < values.size() - 1; ++i)
+            size_t lookup = GetOrCreateLookupIndex(values[0]);
+
+            for (size_t i = 0; i < values.size() - 1; ++i)
             {
-                m_locales[i].localizedStrings.push_back(std::string(values[i + 1]));
+                if (m_locales[locales[i]].localizedStrings.size() <= lookup)
+                    m_locales[locales[i]].localizedStrings.resize(lookup + 1);
+
+                m_locales[locales[i]].localizedStrings[lookup] = std::string(values[i + 1]);
             }
         }
 
+        // ensure all loaded locales have values (even if empty) for all lookup keys
+        for (auto&& locale : m_locales)
+            locale.localizedStrings.resize(m_lookupTable.size());
         return true;
     }
 
     bool Localization::SetLocale(const std::string& locale)
     {
-        auto it = std::find_if(m_locales.begin(), m_locales.end(), [locale](auto&& loc) { return loc.name == locale; });
-        if (it == m_locales.end())
+        for (size_t i = 0; i < m_locales.size(); ++i)
         {
-            m_currentLocale = nullptr;
-            return false;
+            if (m_locales[i].name == locale)
+            {
+                m_currentLocale = &m_locales[i];
+                m_currentLocaleIndex = i;
+                return true;
+            }
         }
+       
+        return false;
+    }
 
         m_currentLocale = &(*it);
         return true;
@@ -82,6 +95,34 @@ namespace Nz
             return empty;
 
         return m_currentLocale->localizedStrings.at(index);
+    }
+
+    size_t Localization::GetOrCreateLocale(std::string_view locale)
+    {
+        for (size_t i = 0; i < m_locales.size(); ++i)
+            if (m_locales[i].name == locale)
+                return i;
+
+        m_locales.emplace_back(std::string(locale));
+
+        if (nullptr != m_currentLocale)
+        {
+            // make sure pointer is still valid (this will invalidate all LocalizedText)
+            m_currentLocale = &m_locales[m_currentLocaleIndex];
+        }
+
+        return m_locales.size() - 1;
+    }
+
+    size_t Localization::GetOrCreateLookupIndex(std::string_view name)
+    {
+        auto it = m_lookupTable.find(std::string(name));
+        if (it != m_lookupTable.end())
+            return it->second;
+
+        size_t index = m_lookupTable.size();
+        m_lookupTable[std::string(name)] = index;
+        return index;
     }
 
 }  // end of namespace Nz
