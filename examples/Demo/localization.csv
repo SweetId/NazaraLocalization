@@ -1,0 +1,3 @@
+;fr-FR;en-US;pt-BR
+LOC_HELLO_WORLD;Bonjour le monde!;Hello World!;Olá Mundo!
+LOC_TEXT_ARG;{1:.2f} est la valeur de {0}!;{pi} is the value of {}!;O valor de {} é {}!
