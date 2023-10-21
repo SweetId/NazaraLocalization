@@ -44,6 +44,11 @@ namespace Nz
 		const std::string& ToString() const;
 		const std::string& GetBaseString() const { return m_str; }
 
+		// == operator compares the key only
+		friend auto operator==(const LocalizedText& A, const LocalizedText& B) { return A.m_str == B.m_str; }
+		// <=> operator compares localized string
+		friend auto operator<=>(const LocalizedText& A, const LocalizedText& B) { return A.ToString() <=> B.ToString(); }
+
 		friend std::ostream& operator<<(std::ostream& out, const Nz::LocalizedText& dt)
 		{
 			return out << dt.ToString();
