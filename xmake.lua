@@ -4,6 +4,7 @@ add_rules("mode.asan", "mode.tsan", "mode.coverage", "mode.debug", "mode.release
 add_rules("plugin.vsxmake.autoupdate")
 
 add_repositories("nazara-engine-repo https://github.com/NazaraEngine/xmake-repo")
+add_requires("nazarautils", "nzsl")
 add_requires("nazaraengine", { alias = "nazara", debug = is_mode("debug") })
 add_requires("fmt")
 
