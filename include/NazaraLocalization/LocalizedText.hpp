@@ -1,15 +1,17 @@
 #pragma once
 
 #include <NazaraLocalization/Config.hpp>
-#include <NazaraLocalization/Localization.hpp>
 
 #include <variant>
+#include <vector>
 #include <optional>
 #include <ostream>
 #include <string_view>
 
 namespace Nz
 {
+	struct Locale;
+
 	class NAZARA_LOCALIZATION_API LocalizedText
 	{
 	public:
@@ -61,7 +63,7 @@ namespace Nz
 
 		// Cache for localization
 		mutable std::optional<size_t> m_index; // index in the lookup array
-		mutable Localization::Locale* m_locale; // current locale to avoid fetching pointer every time
+		mutable Locale* m_locale; // current locale to avoid fetching pointer every time
 		mutable std::optional<std::string> m_cachedStr; // computed string (loca + parameters formatting)
 
 		std::string m_str;

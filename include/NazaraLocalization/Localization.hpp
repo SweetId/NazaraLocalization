@@ -7,6 +7,12 @@
 
 namespace Nz
 {
+    struct NAZARA_LOCALIZATION_API Locale
+    {
+        std::string name;
+        std::vector<std::string> localizedStrings;
+    };
+
     class NAZARA_LOCALIZATION_API Localization : public Nz::ModuleBase<Localization>
     {
         friend ModuleBase;
@@ -33,12 +39,6 @@ namespace Nz
     private:
         size_t GetOrCreateLocale(std::string_view name);
         size_t GetOrCreateLookupIndex(std::string_view name);
-
-        struct Locale
-        {
-            std::string name;
-            std::vector<std::string> localizedStrings;
-        };
 
         std::vector<Locale> m_locales;
         std::unordered_map<std::string, size_t> m_lookupTable;
